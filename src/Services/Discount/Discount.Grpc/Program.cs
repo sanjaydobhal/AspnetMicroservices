@@ -1,5 +1,6 @@
 using Discount.Grpc.Extensions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,16 @@ namespace Discount.Grpc
         // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                //.ConfigureWebHost(web => web.UseUrls("http://*:5003"))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                    .ConfigureKestrel(options =>
+                       {
+                           // Setup a HTTP/2 endpoint without TLS.
+                           options.ListenAnyIP(5003, o => o.Protocols = HttpProtocols.Http2);
+                           options.ListenAnyIP(80);
+                       });
                 });
     }
 }

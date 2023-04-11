@@ -22,13 +22,7 @@ namespace Discount.Grpc.Services
             _repository = repository;
             _mapper = mapper;
             _logger = logger;
-        }
-
-        public DiscountService(IDiscountRepository repository, ILogger<DiscountService> logger)
-        {
-            _repository = repository;
-            _logger = logger;
-        }
+        }       
         public override async Task<CouponModel> GetDiscount(GetDiscountRequest request, ServerCallContext context)
         {
             var coupon = await _repository.GetDiscount(request.ProductName);
